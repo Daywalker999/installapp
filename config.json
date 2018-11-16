@@ -1,0 +1,6 @@
+{
+    "username":"admin",
+    "password":"admin",
+    "baseUrl":"http://localhost:2990/jira",
+    "appFile":"jira_git_plugin-2.19.4.jar"
+}

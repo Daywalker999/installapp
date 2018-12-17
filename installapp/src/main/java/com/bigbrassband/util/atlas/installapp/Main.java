@@ -43,20 +43,26 @@ public class Main {
 
         JSONObject jsonConfig = new JSONObject(FileUtils.readFileToString(new File(args[0]), StandardCharsets.UTF_8));
 
-        String baseUrl = jsonConfig.getString("baseUrl");
-        String username = jsonConfig.getString("username");
-        String password = jsonConfig.getString("password");
-        File appFile = new File(jsonConfig.getString("appFile"));
-        boolean ignoreCertificateErrors = jsonConfig.optBoolean("ignoreCertificateErrors", false);
-        int timeoutMilliseconds = jsonConfig.optInt("timeoutMilliseconds", 10000);
+        Main.performUpload(jsonConfig);
 
-        try (final CloseableHttpClient httpClient = createHttpClient(ignoreCertificateErrors, timeoutMilliseconds, username, password)) {
-            final BasicHeader authHeader = new BasicHeader("authorization", "Basic " + Base64.encodeBase64String((username + ":" + password).getBytes(StandardCharsets.UTF_8)));
-
-            String token = getToken(baseUrl, authHeader, httpClient);
-            uploadFile(baseUrl, authHeader, httpClient, appFile, token);
-        }
     }
+
+    public static void performUpload(JSONObject jsonConfig) throws Exception
+	{
+		String baseUrl = jsonConfig.getString("baseUrl");
+		String username = jsonConfig.getString("username");
+		String password = jsonConfig.getString("password");
+		File appFile = new File(jsonConfig.getString("appFile"));
+		boolean ignoreCertificateErrors = jsonConfig.optBoolean("ignoreCertificateErrors", false);
+		int timeoutMilliseconds = jsonConfig.optInt("timeoutMilliseconds", 10000);
+
+		try (final CloseableHttpClient httpClient = createHttpClient(ignoreCertificateErrors, timeoutMilliseconds, username, password)) {
+			final BasicHeader authHeader = new BasicHeader("authorization", "Basic " + Base64.encodeBase64String((username + ":" + password).getBytes(StandardCharsets.UTF_8)));
+
+			String token = getToken(baseUrl, authHeader, httpClient);
+			uploadFile(baseUrl, authHeader, httpClient, appFile, token);
+		}
+	}
 
     private static void uploadFile(String baseUrl, BasicHeader authHeader, CloseableHttpClient httpClient, File file, String token) throws Exception {
         HttpPost request = new HttpPost();
